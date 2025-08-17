@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    fieldset {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+    }
+    legend {
+      font-weight: bold;
+      color: #444;
+      padding: 0 10px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .message {
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 15px;
+      display: none;
+    }
+    .success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+    .error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Student Registration</h1>
+    <form id="registrationForm">
+      <fieldset>
+        <legend>Personal Details</legend>
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="number" name="age" placeholder="Age" min="16" max="99" required>
+        <input type="text" name="nationality" placeholder="Nationality" required>
+      </fieldset>
+
+      <fieldset>
+        <legend>Academic Details</legend>
+        <input type="text" name="student_id" placeholder="Student ID Number" required>
+        <input type="text" name="school" placeholder="Name of School/University" required>
+        <input type="text" name="degree" placeholder="Degree/Faculty" required>
+        <input type="number" name="year_of_admission" placeholder="Year of Admission" min="2000" max="2099" required>
+      </fieldset>
+
+      <fieldset>
+        <legend>Languages Known</legend>
+        <input type="text" name="languages" placeholder="e.g., English, French, Spanish" required>
+      </fieldset>
+
+      <button type="submit">Register</button>
+    </form>
+
+    <!-- Only one success and one error div -->
+    <div id="confirmation" class="message success"></div>
+    <div id="error" class="message error"></div>
+  </div>
+
+  <script>
+    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const confirmation = document.getElementById('confirmation');
+      const errorDiv = document.getElementById('error');
+
+      // Hide old messages
+      confirmation.style.display = 'none';
+      errorDiv.style.display = 'none';
+
+      const formData = {
+        name: form.elements.name.value,
+        email: form.elements.email.value,
+        age: form.elements.age.value,
+        nationality: form.elements.nationality.value,
+        student_id: form.elements.student_id.value,
+        school: form.elements.school.value,
+        degree: form.elements.degree.value,
+        year_of_admission: form.elements.year_of_admission.value,
+        languages: form.elements.languages.value
+      };
+
+      try {
+        const response = await fetch('http://localhost:3000/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          confirmation.textContent = "✅ Registration Successful!";
+          confirmation.style.display = 'block';
+        } else {
+          errorDiv.textContent = "❌ Error: " + result.message;
+          errorDiv.style.display = 'block';
+        }
+
+      } catch (error) {
+        console.error('Fetch error:', error);
+        errorDiv.textContent = "❌ Error: Could not connect to server";
+        errorDiv.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
