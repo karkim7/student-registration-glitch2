@@ -10,6 +10,8 @@ const app = express();
 app.use(cors());  // Allow all origins during development
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// Serve static files from public folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Database connection pool
 const pool = mysql.createPool({
@@ -37,7 +39,7 @@ testConnection();
 
 // Routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.post('/register', async (req, res) => {
